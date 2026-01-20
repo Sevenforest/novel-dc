@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import SCENARIO from './data/scenario.json';
 
 // --- タイピングコンポーネント（安定版） ---
 const Typewriter = ({ text, speed = 40, onComplete, isForceShow }) => {
@@ -46,15 +47,6 @@ function App() {
   const [isTypingComplete, setIsTypingComplete] = useState(false);
   const [isForceShow, setIsForceShow] = useState(false);
   const [ending, setEnding] = useState(null);
-
-  const SCENARIO = [
-    { speaker: "SYSTEM", text: "Initializing Discrete Space Mesh... [DONE]" },
-    { speaker: "SYSTEM", text: "Checking Planck Scale consistency... [OK]" },
-    { speaker: "カイ", text: "「……世界の『解像度』が、また一段階落ちたな」" },
-    { speaker: "ミオ", text: "「宇宙というOSが、古いメモリを解放しようとしているのよ」" },
-    { speaker: "鈴木", text: "「ふふ。でも安心して。私を継承している君たちは消えたりしないわ」" },
-    { speaker: "SYSTEM", text: "CRITICAL CHOICE: 宇宙OSの実行権限が委譲されました。", isChoice: true }
-  ];
 
   const handleInteraction = () => {
     if (index === -1 || ending || SCENARIO[index]?.isChoice) return;
