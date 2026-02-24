@@ -1,0 +1,20 @@
+[
+  {
+    "speaker": "SYSTEM",
+    "text": "--- 第３２話：存在理由のハック（完） ---",
+    "glitch": true
+  },
+  {
+    "speaker": "カイ",
+    "text": "作者あとがき"
+  },
+  {
+    "speaker": "カイ",
+    "text": "5話までは序章となっております。"
+  },
+  {
+    "speaker": "SYSTEM",
+    "text": ">>> NEXT CHAPTER",
+    "nextChapter": "chapter33"
+  }
+]

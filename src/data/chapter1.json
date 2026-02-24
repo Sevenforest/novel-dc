@@ -1,0 +1,32 @@
+  [
+    { "speaker": "SYSTEM", "text": "Initializing Discrete Space Mesh... [DONE]", "glitch": true },
+    { "speaker": "SYSTEM", "text": "Checking Planck Scale consistency... [OK]", "glitch": true  },
+    { "speaker": "カイ", "text": "「……世界の『解像度』が、また一段階落ちたな」" },
+    { "speaker": "ミオ", "text": "「宇宙というOSが、古いメモリを解放しようとしているのよ」" },
+    { "speaker": "鈴木", "text": "「ふふ。でも安心して。私を継承している君たちは消えたりしないわ」", "type": "special" },
+    { "speaker": "佐藤", "text": "「それはわからないぞ。絶対に消えないかどうか試してみるか？」", "type": "special" },
+    { "speaker": "SYSTEM",  "text": "宇宙は三百二十六万年に一度、全てを停止し、不要な文明を削除する。\nそれを知ってしまった高校生カイに残された時間は、あと1279日。\n\n世界は安定しすぎたがゆえに「無価値」と判定された。\n生き残る条件はただ一つ――宇宙OSに“巨大な例外（バグ）”を起こすこと。\n\nこれは、決定論に支配された宇宙を相手に、一人の少年が予測不能な少女と共に“存在理由”をハックする物語。" },
+    {
+        "speaker": "鈴木",
+        "text": "「さて、どうする？」",
+        "isChoice": true,
+        "choices": [
+          { "label": "A: 宇宙を再起動する", "triggerAction": "go_to_title" },
+          { "label": "B: 現状を維持する", "triggerAction": "go_to_ending" }
+        ]
+    },
+    {
+      "speaker": "SYSTEM",
+      "text": "--- 宇宙の演算を終了します ---",
+      "triggerAction": "go_to_ending"
+    },
+    {
+        "speaker": "鈴木",
+        "text": "「さて、どうする？」",
+        "isChoice": true,
+        "choices": [
+          { "label": "A: 宇宙を再起動する", "nextChapter": "chapter2" },
+          { "label": "B: 現状を維持する", "nextChapter": "chapter1_branch" }
+        ]
+    }
+  ]

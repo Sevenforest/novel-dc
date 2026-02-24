@@ -1,0 +1,12 @@
+[
+  {
+    "speaker": "SYSTEM",
+    "text": "--- 第３１話：未定義の夜明け ---",
+    "glitch": true
+  },
+  {
+    "speaker": "SYSTEM",
+    "text": ">>> NEXT CHAPTER",
+    "nextChapter": "chapter32"
+  }
+]

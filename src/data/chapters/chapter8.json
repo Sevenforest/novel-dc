@@ -1,0 +1,12 @@
+[
+  {
+    "speaker": "SYSTEM",
+    "text": "--- 第８話：不可視の絶望と共犯者 ---",
+    "glitch": true
+  },
+  {
+    "speaker": "SYSTEM",
+    "text": ">>> NEXT CHAPTER",
+    "nextChapter": "chapter9"
+  }
+]

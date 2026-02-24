@@ -1,0 +1,12 @@
+[
+  {
+    "speaker": "SYSTEM",
+    "text": "--- 第２９話：特異点の会合 ---",
+    "glitch": true
+  },
+  {
+    "speaker": "SYSTEM",
+    "text": ">>> NEXT CHAPTER",
+    "nextChapter": "chapter30"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "speaker": "SYSTEM",
+    "text": "--- 第１１話：演算の断崖、あるいは説明の余白 ---",
+    "glitch": true
+  },
+  {
+    "speaker": "SYSTEM",
+    "text": ">>> NEXT CHAPTER",
+    "nextChapter": "chapter12"
+  }
+]

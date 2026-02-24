@@ -1,0 +1,12 @@
+[
+  {
+    "speaker": "SYSTEM",
+    "text": "--- 第２１話：燃料としての生（孤独なデバッグ） ---",
+    "glitch": true
+  },
+  {
+    "speaker": "SYSTEM",
+    "text": ">>> NEXT CHAPTER",
+    "nextChapter": "chapter22"
+  }
+]

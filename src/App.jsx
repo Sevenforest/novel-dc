@@ -1,129 +1,176 @@
-import React, { useState, useEffect, useRef } from 'react';
-import SCENARIO from './data/scenario.json';
+import React, { useState, useEffect } from 'react';
+import TitleView from './components/TitleView';
+import GameView from './components/GameView';
+import EndingView from './components/EndingView';
+import SaveLoadView from './components/SaveLoadView';
+import { CHAPTERS, INITIAL_CHAPTER } from './data/chapters';
 
-// --- タイピングコンポーネント（安定版） ---
-const Typewriter = ({ text, speed = 40, onComplete, isForceShow }) => {
-  const [displayedText, setDisplayedText] = useState("");
-  const timerRef = useRef(null); // タイマーを保持する参照
+const SAVE_KEY_PREFIX = "DIGITAL_COSMOLOGY_SAVE_v2_";
 
+function App() {
+  // --- State Management ---
+  const [gameState, setGameState] = useState('title'); // title, playing, ending
+  const [currentChapterId, setCurrentChapterId] = useState(INITIAL_CHAPTER);
+  const [index, setIndex] = useState(0);
+
+  // Save/Load Modal
+  const [showSaveLoad, setShowSaveLoad] = useState(false);
+  const [saveLoadMode, setSaveLoadMode] = useState('load'); // 'save' or 'load'
+  const [savedData, setSavedData] = useState({});
+
+  // Noise glitch state
+  const [isGlitching, setIsGlitching] = useState(false);
+
+  // Load available save data into memory
   useEffect(() => {
-    // 1. 全表示フラグが立っている場合
-    if (isForceShow) {
-      setDisplayedText(text);
-      onComplete();
+    refreshSavedData();
+  }, [showSaveLoad]);
+
+  const refreshSavedData = () => {
+    const data = {};
+    for (let i = 1; i <= 5; i++) {
+      const saved = localStorage.getItem(`${SAVE_KEY_PREFIX}slot_${i}`);
+      if (saved) {
+        try {
+          data[`slot_${i}`] = JSON.parse(saved);
+        } catch (e) {
+          console.error("Failed to parse save data for slot", i);
+        }
+      }
+    }
+    setSavedData(data);
+  };
+
+  const hasAnySave = Object.keys(savedData).length > 0;
+
+  // --- Actions ---
+  const triggerGlitch = () => {
+    setIsGlitching(true);
+    setTimeout(() => setIsGlitching(false), 300);
+  };
+
+  const startGame = (chapId = INITIAL_CHAPTER, idx = 0) => {
+    setCurrentChapterId(chapId);
+    setIndex(idx);
+    setGameState('playing');
+  };
+
+  const handleNext = () => {
+    const chapterData = CHAPTERS[currentChapterId];
+    if (!chapterData) {
+      console.error("Chapter not found:", currentChapterId);
+      setGameState('ending');
       return;
     }
 
-    // 2. タイピング処理
-    let i = 0;
-    setDisplayedText(""); // 初期化
-    
-    // 以前のタイマーがあれば掃除
-    if (timerRef.current) clearInterval(timerRef.current);
+    const currentLine = chapterData[index];
 
-    timerRef.current = setInterval(() => {
-      // 安全策：textが存在することを確認
-      if (!text) return;
-      
-      setDisplayedText(text.substring(0, i + 1));
-      i++;
-
-      if (i >= text.length) {
-        clearInterval(timerRef.current);
-        onComplete();
+    if (currentLine.triggerAction) {
+      handleAction(currentLine);
+      const exitActions = ['go_to_ending', 'go_to_title'];
+      if (exitActions.includes(currentLine.triggerAction)) {
+        return;
       }
-    }, speed);
+    }
 
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [text, isForceShow]); // textかisForceShowが変わったら再始動
-
-  return <span>{displayedText}</span>;
-};
-
-function App() {
-  const [index, setIndex] = useState(-1);
-  const [isTypingComplete, setIsTypingComplete] = useState(false);
-  const [isForceShow, setIsForceShow] = useState(false);
-  const [ending, setEnding] = useState(null);
-
-  const handleInteraction = () => {
-    if (index === -1 || ending || SCENARIO[index]?.isChoice) return;
-
-    if (!isTypingComplete) {
-      setIsForceShow(true);
+    if (index < chapterData.length - 1) {
+      setIndex(index + 1);
+    } else if (currentLine.nextChapter) {
+      startGame(currentLine.nextChapter, 0);
     } else {
-      setIndex(prev => prev + 1);
-      setIsTypingComplete(false);
-      setIsForceShow(false);
+      setGameState('ending');
     }
   };
 
+  const handleAction = (actionData) => {
+    if (actionData.triggerAction === 'go_to_ending') {
+      setIndex(0);
+      setGameState('ending');
+    } else if (actionData.triggerAction === 'go_to_title') {
+      setIndex(0);
+      setGameState('title');
+    }
+    else if (actionData.nextChapter) {
+      startGame(actionData.nextChapter, 0);
+    }
+  };
+
+  const handleSave = (slotId) => {
+    const data = {
+      chapterId: currentChapterId,
+      index: index,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(`${SAVE_KEY_PREFIX}${slotId}`, JSON.stringify(data));
+    triggerGlitch();
+    refreshSavedData();
+    setShowSaveLoad(false);
+  };
+
+  const handleLoad = (slotId, data) => {
+    triggerGlitch();
+    startGame(data.chapterId, data.index);
+    setShowSaveLoad(false);
+  };
+
+  // --- Render ---
   return (
+    <div className={`relative min-h-screen bg-black overflow-hidden select-none ${isGlitching ? 'animate-glitch' : ''}`}
+      onContextMenu={(e) => e.preventDefault()}>
 
-      // Appコンポーネントの return 部分
-      <div 
-        onContextMenu={(e) => e.preventDefault()} // 右クリックを無効化
-        onClick={handleInteraction}
-        style={{ 
-          backgroundColor: '#000', 
-          color: '#0f0', 
-          height: '100vh', 
-          width: '100vw', 
-          fontFamily: 'monospace', 
-          padding: '40px', 
-          cursor: 'pointer', 
-          overflow: 'hidden',
-    
-          // --- ↓ これを追加！ ---
-          userSelect: 'none',           // 標準
-          WebkitUserSelect: 'none',     // Safari用
-          msUserSelect: 'none',         // 旧IE用
-          // -----------------------
-        }}
-      >
-    
-      {index === -1 && (
-        <div style={{ margin: 'auto', textAlign: 'center' }}>
-          <h1>DIGITAL COSMOLOGY</h1>
-          <button onClick={(e) => { e.stopPropagation(); setIndex(0); }} style={buttonStyle}>
-            [ INITIATE SYSTEM BOOT ]
+      {gameState === 'title' && (
+        <TitleView
+          onNewGame={() => startGame(INITIAL_CHAPTER, 0)}
+          onOpenLoad={() => {
+            refreshSavedData();
+            setSaveLoadMode('load');
+            setShowSaveLoad(true);
+          }}
+          hasSave={hasAnySave}
+        />
+      )}
+
+      {gameState === 'playing' && (
+        <>
+          {/* MENU BUTTON */}
+          <button
+            onClick={() => {
+              setSaveLoadMode('save');
+              setShowSaveLoad(true);
+            }}
+            className="absolute top-4 right-4 z-40 text-xs px-4 py-2 border border-green-900 text-green-500 bg-black/80 hover:bg-green-900/50 backdrop-blur"
+          >
+            [ SYSTEM MENU ]
           </button>
-        </div>
+
+          <GameView
+            data={CHAPTERS[currentChapterId]}
+            index={index}
+            onNext={handleNext}
+            onAction={handleAction}
+          />
+        </>
       )}
 
-      {index >= 0 && !ending && (
-        <div key={index}> {/* ← 【重要】keyにindexを渡すことで、行が変わるたびにコンポーネントを新品にする */}
-          <div style={{ opacity: 0.5, marginBottom: '10px' }}>{SCENARIO[index].speaker}</div>
-          <div style={{ fontSize: '1.8rem', lineHeight: '1.4' }}>
-            <Typewriter 
-              text={SCENARIO[index].text} 
-              onComplete={() => setIsTypingComplete(true)} 
-              isForceShow={isForceShow}
-            />
-          </div>
-          
-          {isTypingComplete && SCENARIO[index].isChoice && (
-            <div style={{ marginTop: '50px', display: 'flex', gap: '20px' }}>
-              <button onClick={(e) => { e.stopPropagation(); setEnding('A'); }} style={choiceButtonStyle}>A: 維持</button>
-              <button onClick={(e) => { e.stopPropagation(); setEnding('B'); }} style={choiceButtonStyle}>B: ハック</button>
-            </div>
-          )}
-        </div>
+      {gameState === 'ending' && (
+        <EndingView onReboot={() => setGameState('title')} />
       )}
 
-      {ending && (
-        <div key="ending">
-          <h2>{ending === 'A' ? "END: REPETITION" : "END: UNKNOWN FUTURE"}</h2>
-          <button onClick={(e) => { e.stopPropagation(); setIndex(-1); setEnding(null); }} style={buttonStyle}>REBOOT</button>
-        </div>
+      {showSaveLoad && (
+        <SaveLoadView
+          mode={saveLoadMode}
+          savedData={savedData}
+          onSave={handleSave}
+          onLoad={handleLoad}
+          onClose={() => setShowSaveLoad(false)}
+          onReturnTitle={() => {
+            setShowSaveLoad(false);
+            setGameState('title');
+          }}
+        />
       )}
     </div>
   );
 }
-
-const buttonStyle = { backgroundColor: 'transparent', color: '#0f0', border: '1px solid #0f0', padding: '15px 30px', cursor: 'pointer', fontFamily: 'monospace' };
-const choiceButtonStyle = { backgroundColor: '#0f0', color: '#000', border: 'none', padding: '20px', cursor: 'pointer', fontWeight: 'bold' };
 
 export default App;

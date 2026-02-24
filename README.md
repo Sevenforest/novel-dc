@@ -1,16 +1,50 @@
-# React + Vite
+# Novel Game AI Dev PoC (novel-dc)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+このリポジトリは、**「AIアシスタントを用いてノベルゲーム（ビジュアルノベル）を開発できるか？」** を検証するための Proof of Concept（概念実証）プロジェクトです。
 
-Currently, two official plugins are available:
+## 概要 / Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+AIとの対話を通じて、Reactベースのノベルゲーム環境を構築し、ゲームのテキスト進行やUIコンポーネントの配置、シナリオデータの組み込みが可能であるかを検証しました。
+結果として、AIアシスタントを活用したノベルゲームの高速プロトタイピングが十分可能であることが確認できました。
 
-## React Compiler
+## 使用技術 / Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **UI Framework**: [React 19](https://react.dev/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Novel Engine**: [`narraleaf-react`](https://www.npmjs.com/package/narraleaf-react)
 
-## Expanding the ESLint configuration
+## 開発の進め方 / How it was built
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+このプロジェクトは、AIに対する自然言語での指示（プロンプト）をベースに構築されました。
+
+1. AIへの指示出し（キャラクターの配置、テキストウィンドウのスタイル調整、シナリオの展開など）
+2. AIによるコードベースの直接編集・Reactコンポーネントの実装
+3. エラー修正やデザインの微調整といった対話的なイテレーションを通じたブラッシュアップ
+
+## セットアップと起動 / Setup & Run
+
+ローカル環境で動かすための手順です。Node.jsがインストールされていることを前提とします。
+
+```bash
+# 1. リポジトリのクローン（またはディレクトリへの移動）
+cd novel-dc
+
+# 2. 依存関係のインストール
+npm install
+
+# 3. 開発サーバーの起動
+npm run dev
+```
+
+コマンド実行後、ブラウザで `http://localhost:5173` にアクセスすることで、ゲーム画面を確認できます。
+
+## セットアップが面倒な場合
+以下のURLで確認できます。
+
+https://sevenforest.github.io/novel-dc/
+
+
+## まとめ / Conclusion
+
+本リポジトリはPoCとして十分な成果（AIによるノベルゲームの基本システム構築・実装能力の確認）が得られたため、本リポジトリでの検証ミッションは完了とします。ここで得られた知見は、今後のより複雑なフラグ管理やリッチな演出を含む本格的なゲーム開発に応用可能です。
